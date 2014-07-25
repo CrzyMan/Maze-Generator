@@ -1,3 +1,4 @@
+var grid, gridW, gridH;
 
 /*
  * Generates the maze
@@ -10,7 +11,11 @@
  */
 function generate(){
     
+    // Reset and cleanup from potential last round
     cancelAnimationFrame(reqAnimId);
+    mouseX = mouseY = 0;
+    grid = [];
+    pathStack = [];
     
     // Keep the columns and rows within bounds
     columns = columns >= 10 ? (columns <= 30 ? ~~columns : 30) : 10;
@@ -18,13 +23,10 @@ function generate(){
     
     
     // empty and then fill the the grid
-    grid = [];
+
     for (var i = 0; i < columns; i++){
         grid.push(new Uint8Array(rows));
     }
-    
-    // Empty the stack
-    pathStack = [];
     
     // clear and then draw the grid
     c_maze.c.clearRect(0,0,c_maze.width,c_maze.height);
@@ -33,13 +35,15 @@ function generate(){
     gridH = c_maze.height / rows;
     c_maze.c.beginPath();
     for(var i = 0; i < columns; i++){
-        c_maze.c.moveTo(~~(gridW*i)+0.5, 0);
-        c_maze.c.lineTo(~~(gridW*i)+0.5, c_maze.height);
+        c_maze.c.moveTo(~~(gridW*i) + 0.5, 0);
+        c_maze.c.lineTo(~~(gridW*i) + 0.5, c_maze.height);
     }
-    for(var i = 0; i < rows; i++){
-        c_maze.c.moveTo(0, ~~(gridH*i)+0.5);
-        c_maze.c.lineTo(c_maze.width, ~~(gridH*i)+0.5);
+    
+    for(var i = 0; i <= rows; i++){
+        c_maze.c.moveTo(0, ~~(gridH*i) + 0.5);
+        c_maze.c.lineTo(c_maze.width, ~~(gridH*i) + 0.5);
     }
+    
     c_maze.c.closePath();
     c_maze.c.stroke();
     
@@ -49,22 +53,38 @@ function generate(){
     //grid[sx][sy] = 1;
     pathStack.push([[sx, sy],null]);
     
-    if (animation)
+    if (animation){
         runMazeGen();
-    else
+    } else {
         while (stepMazeGenerate() == true){}
-    
-    c_block.c.fillStyle = "lime";
-    c_block.c.fillRect(Block.margin,  Block.margin, gridW - 2*Block.margin, gridH - 2*Block.margin);
-    c_maze.c.fillStyle = "red";
-    c_maze.c.fillRect((columns-1)*gridW + Block.margin, (rows-1)*gridH + Block.margin, gridW - 2*Block.margin, gridH - 2*Block.margin);
-    
-    grid = [];
+        
+        grid = [];
+        
+        c_maze.c.fillStyle = "red";
+        c_maze.c.fillRect((columns-1)*gridW + Block.margin, (rows-1)*gridH + Block.margin, gridW - 2*Block.margin, gridH - 2*Block.margin);
+        c_maze.updateData();
+        
+        Block.moveToStart();
+        Block.draw();
+        Block.move();
+    }
 }
 
 function runMazeGen(){
     if (stepMazeGenerate() == true)
         reqAnimId = requestAnimationFrame(runMazeGen);
+    else{
+        grid = [];
+        
+        /* */
+        c_maze.c.fillStyle = "red";
+        c_maze.c.fillRect((columns-1)*gridW + Block.margin, (rows-1)*gridH + Block.margin, gridW - 2*Block.margin, gridH - 2*Block.margin);
+        c_maze.updateData();
+        
+        Block.moveToStart();
+        Block.draw();
+        Block.move();
+    }
 }
 
 

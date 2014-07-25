@@ -74,16 +74,19 @@
  */
 
 // other variables
-var grid, gridW, gridH, columns, rows, reqAnimId, mouseX, mouseY;
+var columns, rows, reqAnimId, mouseX, mouseY;
 
 // For easy reference to relative direction (0: up, 1: right, 2: down, 3: left)
 var directions = [[0,1],[1,0],[0,-1],[-1,0]];
+
 // Add the maze canvas
 var c_maze = document.createElement('canvas');
 c_maze.c = c_maze.getContext('2d');
 c_maze.height = 800;
 c_maze.width = 800;
 c_maze.style.zIndex = 1;
+c_maze.webkitImageSmoothingEnabled = false;
+c_maze.updateData = function(){c_maze.data = c_maze.c.getImageData(0,0,c_maze.width,c_maze.height).data;};
 
 // Add block canvas
 var c_block = document.createElement('canvas');
@@ -125,18 +128,6 @@ var animation = false;
 i_a.onchange = function(){
     animation = i_a.checked;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
         </script>
     </body>
