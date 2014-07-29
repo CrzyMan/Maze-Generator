@@ -5,8 +5,8 @@ Block = {
     // position is the middle of the Block
     x: 0,
     y: 0,
-    speed: 1,
-    margin: 5,
+    speed: 2,
+    margin: 7,
     
     /*
      * Moves the box toward the mouse
@@ -21,8 +21,8 @@ Block = {
         var dx = mouseX - Block.x;
         var dy = mouseY - Block.y;
         var d = Math.sqrt(dx*dx + dy*dy);
-        dx /= d*Block.speed;
-        dy /= d*Block.speed;
+        dx *= Block.speed/d;
+        dy *= Block.speed/d;
         
         // check if you can move
         var dirx = dx > 0 ? 1 : dx < 0 ? 3 : -1;
@@ -31,8 +31,20 @@ Block = {
         var fx = Block.lookAround(dirx);
         var fy = Block.lookAround(diry);
         
-        if (fx==1) dx=0;
-        if (fy==1) dy=0;
+        if (fx==1){
+            dx=0;
+            if (dirx == 1)
+                Block.x--;
+            else
+                Block.x++;
+        }
+        if (fy==1){
+            dy=0;
+            if (diry == 0)
+                Block.y--;
+            else
+                Block.y++;
+        }
         
         if (dx != 0 || dy != 0){
             Block.erase();
@@ -41,12 +53,7 @@ Block = {
             Block.draw();
         }
         
-        var win = (fx == 2 || fy == 2); 
-        if (win != true){
-            reqAnimId = requestAnimationFrame(Block.move);
-        } else {
-            // YOU WIN!
-        }
+        return (fx == 2 || fy == 2); 
         
     },
     
@@ -68,6 +75,12 @@ Block = {
            
            i++;
         }
+        i = -limit;
+        while (flag==0 && i <= limit){
+           flag = checkMazePixel(Block.x + i*vx + vy*directions[dir][0]*(gridW*0.5 - Block.margin + 1) , Block.y + i*vy + vx*directions[dir][1]*(gridH*0.5 - Block.margin + 1));
+           
+           i++;
+        }
         
         return flag;
     },
@@ -81,8 +94,9 @@ Block = {
     },
     
     moveToStart: function(){
-        Block.x = gridW/2;
-        Block.y = gridH/2;
+        Block.x = mouseX = gridW/2 + Block.margin/4;
+        Block.y = mouseY = gridH/2 + Block.margin/4;
+        
     },
 };
 

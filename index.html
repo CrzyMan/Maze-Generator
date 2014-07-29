@@ -50,10 +50,14 @@
                     Animation: <input type="checkbox" id="i_a">
                 </td>
                 <td>
-                    <span style="font-weight: bold; font-size: large;">Game Mode</span><br/>
-                    <input type="radio" value=0 name="gameMode" checked=true> FreeMode
-                    <input type="radio" value=1 name="gameMode"> Timed
-                    <input type="radio" value=2 name="gameMode"> Points
+                    <span style="font-weight: bold; font-size: large;"><u>Game Mode</u></span><br/>
+                    <input type="radio" class="radio" value=0 name="gameMode" checked=true> Free Mode
+                    <input type="radio" class="radio" value=1 name="gameMode"> Time-Attack
+                    <input type="radio" class="radio" value=2 name="gameMode"> Point-Attack
+                </td>
+                <td width="200px">
+                    <span style="font-weight: bold; font-size: x-large;">Points: </span><span id="s_points" style="font-size: x-large;">0</span><br/>
+                    <span style="font-weight: bold; font-size: x-large;">Time: </span><span id="s_time" style="font-size: x-large;">0</span>
                 </td>
             </tr>
         </table>
@@ -112,15 +116,15 @@ c_maze.onmousemove = function(e){
 // set-up DOM inputs
 var s_c = document.getElementById('s_c');
 var r_c = document.getElementById('r_c');
-r_c.onmousemove = function(){ s_c.innerHTML = columns = r_c.value; };
+r_c.onmousemove = function(){ s_c.innerHTML = r_c.value; };
 
 var s_r = document.getElementById('s_r');
 var r_r = document.getElementById('r_r');
-r_r.onmousemove = function(){ s_r.innerHTML = rows = r_r.value; };
+r_r.onmousemove = function(){ s_r.innerHTML = r_r.value; };
 
 var b_g = document.getElementById('b_g');
 b_g.onclick = function(){
-    generate();
+    startGame();
 };
 
 var i_a = document.getElementById('i_a');

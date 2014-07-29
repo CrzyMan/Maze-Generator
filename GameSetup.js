@@ -1,5 +1,11 @@
 var grid, gridW, gridH;
 
+function startGame(){
+    generate();
+    setGameMode();
+    gameLogic[gameMode].setup();
+}
+
 /*
  * Generates the maze
  *
@@ -16,6 +22,9 @@ function generate(){
     mouseX = mouseY = 0;
     grid = [];
     pathStack = [];
+    
+    columns = r_c.value;
+    rows = r_r.value;
     
     // Keep the columns and rows within bounds
     columns = columns >= 10 ? (columns <= 30 ? ~~columns : 30) : 10;
@@ -58,32 +67,26 @@ function generate(){
     } else {
         while (stepMazeGenerate() == true){}
         
-        grid = [];
-        
-        c_maze.c.fillStyle = "red";
-        c_maze.c.fillRect((columns-1)*gridW + Block.margin, (rows-1)*gridH + Block.margin, gridW - 2*Block.margin, gridH - 2*Block.margin);
-        c_maze.updateData();
-        
-        Block.moveToStart();
-        Block.draw();
-        Block.move();
+        finishSetUp();
     }
+}
+
+function finishSetUp(){
+    grid = [];
+    
+    c_maze.c.fillStyle = "red";
+    c_maze.c.fillRect((columns-1)*gridW + Block.margin, (rows-1)*gridH + Block.margin, gridW - 2*Block.margin, gridH - 2*Block.margin);
+    c_maze.updateData();
+    
+    Block.moveToStart();
+    Block.draw();
 }
 
 function runMazeGen(){
     if (stepMazeGenerate() == true)
         reqAnimId = requestAnimationFrame(runMazeGen);
     else{
-        grid = [];
-        
-        /* */
-        c_maze.c.fillStyle = "red";
-        c_maze.c.fillRect((columns-1)*gridW + Block.margin, (rows-1)*gridH + Block.margin, gridW - 2*Block.margin, gridH - 2*Block.margin);
-        c_maze.updateData();
-        
-        Block.moveToStart();
-        Block.draw();
-        Block.move();
+        finishSetUp();
     }
 }
 
