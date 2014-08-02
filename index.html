@@ -30,9 +30,11 @@
                 
             }
         </style>
+        <script async=true src="Block.js"></script>
+        <script async=true src="KeyBinding.js"></script>
         <script async=true src="GameSetup.js"></script>
         <script async=true src="GameLogic.js"></script>
-        <script async=true src="Block.js"></script>
+        
     </head>
 
     <body>
@@ -59,6 +61,12 @@
                     <span style="font-weight: bold; font-size: x-large;">Points: </span><span id="s_points" style="font-size: x-large;">0</span><br/>
                     <span style="font-weight: bold; font-size: x-large;">Time: </span><span id="s_time" style="font-size: x-large;">0</span>
                 </td>
+                <td>
+                    <span style="font-size: larger">
+                        1. Use the A,S,W, and D keys to move the box.<br/>
+                        2. Click the box and it will follow your mouse.
+                    </span>
+                </td>
             </tr>
         </table>
         
@@ -67,18 +75,10 @@
 /*
  * TODO: Click green square, it follows the mouse.
  *
- * TODO: assign score by time and difficulty
- *    - maybe: ( rows * columns ) / time
- *
- * TODO: Different modes
- *    - Timed: See how many points you can get in a certain amount of time
- *    - Freemode: Just keep going
- *    - Points: See how quickly you can reach a certain number of points
- *    - setup(), update(), isDone()
  */
 
 // other variables
-var columns, rows, reqAnimId, mouseX, mouseY;
+var columns, rows, reqAnimId, mouseX, mouseY, inputMode=0;
 
 // For easy reference to relative direction (0: up, 1: right, 2: down, 3: left)
 var directions = [[0,1],[1,0],[0,-1],[-1,0]];
@@ -88,7 +88,7 @@ var c_maze = document.createElement('canvas');
 c_maze.c = c_maze.getContext('2d');
 c_maze.height = 800;
 c_maze.width = 800;
-c_maze.style.zIndex = 1;
+c_maze.style.zIndex = 2;
 c_maze.webkitImageSmoothingEnabled = false;
 c_maze.updateData = function(){c_maze.data = c_maze.c.getImageData(0,0,c_maze.width,c_maze.height).data;};
 
@@ -98,10 +98,17 @@ c_block.c = c_block.getContext('2d');
 c_block.c.fillStyle = "red";
 c_block.height = 800;
 c_block.width = 800;
-c_maze.style.zIndex = 2;
-c_maze.onmousemove = function(e){
-    mouseX = e.offsetX;
-    mouseY = e.offsetY;
+c_block.style.zIndex = 3;
+c_block.updateData = function(){c_block.data = c_block.c.getImageData(0,0,c_block.width,c_block.height).data;};
+c_block.onmousedown = function(e){
+    this.updateData();
+    if (checkBlockPixel(e.offsetX, e.offsetY) == 1) inputMode=1;
+}
+c_block.onmousemove = function(e){
+    if (inputMode==1){
+        mouseX = e.offsetX;
+        mouseY = e.offsetY;
+    }
 };
 
 (function(){
@@ -132,6 +139,33 @@ var animation = false;
 i_a.onchange = function(){
     animation = i_a.checked;
 }
+
+// final setup after other files have loaded
+document.body.onload = function(){
+    // Set-up key inputs
+    KeyBinding.bind_key("A",{
+        onkeydown:function(){
+            inputMode=0;
+        },
+    });
+    KeyBinding.bind_key("S",{
+        onkeydown:function(){
+            inputMode=0;
+        },
+    });
+    KeyBinding.bind_key("W",{
+        onkeydown:function(){
+            inputMode=0;
+        },
+    });
+    KeyBinding.bind_key("D",{
+        onkeydown:function(){
+            inputMode=0;
+        },
+    });
+}
+
+
 
         </script>
     </body>
